@@ -1,4 +1,4 @@
-# eas siwe enterprise onramp
+# attest id
 
 Initial scaffold for eas-siwe-enterprise-onramp.
 
