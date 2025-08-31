@@ -1,6 +1,9 @@
 'use client';
 import React, { useState } from 'react';
 import { SiweMessage } from 'siwe';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Wallet, Loader2 } from 'lucide-react';
 
 export default function SiwePage() {
   const [status, setStatus] = useState('');
@@ -12,15 +15,15 @@ export default function SiwePage() {
     
     try {
       if (!('ethereum' in window)) {
-        setStatus('❌ No wallet detected. Please install MetaMask or another Web3 wallet.');
+        setStatus('No wallet detected. Please install MetaMask or another Web3 wallet.');
         return;
       }
       
-      setStatus('🔄 Requesting wallet connection...');
+      setStatus('Requesting wallet connection...');
       const [address] = await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
       const chainId = await (window as any).ethereum.request({ method: 'eth_chainId' });
       
-      setStatus('🔄 Getting nonce...');
+      setStatus('Getting nonce...');
       const { nonce } = await fetch('/api/nonce', { method: 'POST' }).then((r) => r.json());
 
       const domain = window.location.host;
@@ -36,13 +39,13 @@ export default function SiwePage() {
         nonce
       });
       
-      setStatus('🔄 Please sign the message in your wallet...');
+      setStatus('Please sign the message in your wallet...');
       const signature = await (window as any).ethereum.request({ 
         method: 'personal_sign', 
         params: [message.prepareMessage(), address] 
       });
       
-      setStatus('🔄 Verifying signature...');
+      setStatus('Verifying signature...');
       const res = await fetch('/api/verify', { 
         method: 'POST', 
         headers: { 'content-type': 'application/json' }, 
@@ -51,18 +54,18 @@ export default function SiwePage() {
       const result = await res.json();
       
       if (result.ok) {
-        setStatus('✅ Successfully authenticated! Redirecting...');
+        setStatus('Successfully authenticated! Redirecting...');
         setTimeout(() => {
           window.location.href = '/';
         }, 1500);
       } else {
-        setStatus(`❌ Authentication failed: ${result.error || 'Unknown error'}`);
+        setStatus(`Authentication failed: ${result.error || 'Unknown error'}`);
       }
     } catch (err: any) {
       if (err.code === 4001) {
-        setStatus('❌ User rejected the request');
+        setStatus('User rejected the request');
       } else {
-        setStatus(`❌ Error: ${err.message || 'Unknown error'}`);
+        setStatus(`Error: ${err.message || 'Unknown error'}`);
       }
     } finally {
       setLoading(false);
@@ -70,32 +73,42 @@ export default function SiwePage() {
   }
 
   return (
-    <div className="siwePage">
-      <div className="siweCard">
-        <h2>Sign-In with Ethereum</h2>
-        <p>Connect your wallet and sign a message to authenticate</p>
-        
-        <button className="button" onClick={connectAndSign} disabled={loading} style={{ width: '100%' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M5 7h14l-1 7H6L5 7Z"/>
-            <path d="M5 7l-1-3h16l-1 3"/>
-            <path d="M10 14v6"/>
-            <path d="M14 14v6"/>
-            <path d="M8 20h8"/>
-          </svg>
-          {loading ? 'Processing...' : 'Connect Wallet'}
-        </button>
-        
-        {status && (
-          <div className="statusBox">
-            {status}
+    <div className="flex justify-center items-center min-h-[60vh]">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+            Sign-In with Ethereum
+          </CardTitle>
+          <CardDescription>
+            Connect your wallet and sign a message to authenticate
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Button 
+            onClick={connectAndSign} 
+            disabled={loading} 
+            className="w-full flex items-center gap-2"
+            size="lg"
+          >
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Wallet className="h-4 w-4" />
+            )}
+            {loading ? 'Processing...' : 'Connect Wallet'}
+          </Button>
+          
+          {status && (
+            <div className="p-3 bg-muted rounded-md border">
+              <p className="text-sm font-mono break-all">{status}</p>
+            </div>
+          )}
+          
+          <div className="text-xs text-muted-foreground text-center">
+            <p>Supported wallets: MetaMask, WalletConnect, Coinbase Wallet, and more</p>
           </div>
-        )}
-        
-        <div style={{ marginTop: '2rem', fontSize: '0.875rem', color: 'rgba(255,255,255,0.5)' }}>
-          <p>Supported wallets: MetaMask, WalletConnect, Coinbase Wallet, and more</p>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

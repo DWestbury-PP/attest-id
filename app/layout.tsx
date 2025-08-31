@@ -9,15 +9,19 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <div className="container">
-          <header className="header">
+      <body className="dark">
+        <div className="container mx-auto max-w-7xl px-4 py-8 min-h-screen flex flex-col">
+          <header className="flex justify-between items-center py-8 border-b border-border mb-12">
             <div>
-              <h1 className="logo">attest-id</h1>
-              <p className="subtitle">Sign-In with Ethereum + Attestations (EAS)</p>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                attest-id
+              </h1>
+              <p className="text-muted-foreground text-lg mt-2">
+                Sign-In with Ethereum + Attestations (EAS)
+              </p>
             </div>
           </header>
-          <main className="main">
+          <main className="flex-1">
             {children}
           </main>
         </div>

@@ -1,5 +1,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Wallet, LogOut, FileText, Search, CheckCircle, AlertCircle } from 'lucide-react';
 
 export default function Home() {
   const [me, setMe] = useState<{ authenticated: boolean; address?: string } | null>(null);
@@ -29,13 +34,13 @@ export default function Home() {
       const json = await res.json();
       
       if (res.ok) {
-        setMessage(`✅ Attestation created: ${json.uid}`);
+        setMessage(`Attestation created: ${json.uid}`);
         form.reset();
       } else {
-        setMessage(`❌ Error: ${json.error || 'Failed to create attestation'}`);
+        setMessage(`Error: ${json.error || 'Failed to create attestation'}`);
       }
     } catch (err) {
-      setMessage('❌ Network error');
+      setMessage('Network error');
     } finally {
       setLoading(false);
     }
@@ -58,102 +63,138 @@ export default function Home() {
 
   return (
     <>
-      <div className="authSection">
-        <button className="button" onClick={() => window.location.assign('/siwe')}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-            <path d="M21 3v5h-5"/>
-            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-          </svg>
+      <div className="flex flex-wrap items-center gap-4 mb-8">
+        <Button onClick={() => window.location.assign('/siwe')} className="flex items-center gap-2">
+          <Wallet className="h-4 w-4" />
           Connect + SIWE
-        </button>
+        </Button>
         
         {me?.authenticated && (
-          <button className="button secondary" onClick={() => fetch('/api/logout', { method: 'POST' }).then(() => location.reload())}>
+          <Button 
+            variant="outline" 
+            onClick={() => fetch('/api/logout', { method: 'POST' }).then(() => location.reload())}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="h-4 w-4" />
             Logout
-          </button>
+          </Button>
         )}
         
-        <div className={`statusBadge ${me?.authenticated ? 'authenticated' : 'unauthenticated'}`}>
-          <span className={`dot ${me?.authenticated ? 'green' : 'red'}`}></span>
+        <Badge variant={me?.authenticated ? 'success' : 'destructive'} className="flex items-center gap-2">
           {me?.authenticated ? (
-            <>Connected: {me.address?.slice(0, 6)}...{me.address?.slice(-4)}</>
-          ) : (
-            'Not connected'
-          )}
-        </div>
-      </div>
-
-      <div className="grid">
-        <div className="card">
-          <h2>📝 Issue Attestation</h2>
-          {!me?.authenticated ? (
-            <p style={{ color: 'rgba(255,255,255,0.6)' }}>Please connect your wallet first</p>
-          ) : (
-            <form className="form" onSubmit={handleAttest}>
-              <div className="formGroup">
-                <label className="label" htmlFor="subject">Subject Address</label>
-                <input 
-                  id="subject"
-                  name="subject" 
-                  className="input" 
-                  placeholder="0x0000000000000000000000000000000000000000" 
-                  required
-                  pattern="0x[a-fA-F0-9]{40}"
-                  title="Please enter a valid Ethereum address"
-                />
-              </div>
-              
-              <div className="formGroup">
-                <label className="label" htmlFor="note">Attestation Note</label>
-                <input 
-                  id="note"
-                  name="note" 
-                  className="input" 
-                  placeholder="Verified identity" 
-                  required
-                />
-              </div>
-              
-              <button className="button" type="submit" disabled={loading}>
-                {loading ? 'Creating...' : 'Create Attestation'}
-              </button>
-              
-              {message && (
-                <div className="statusBox" style={{ marginTop: '1rem' }}>
-                  {message}
-                </div>
-              )}
-            </form>
-          )}
-        </div>
-
-        <div className="card">
-          <h2>🔍 My Attestations</h2>
-          {!me?.authenticated ? (
-            <p style={{ color: 'rgba(255,255,255,0.6)' }}>Please connect your wallet first</p>
+            <>
+              <CheckCircle className="h-3 w-3" />
+              Connected: {me.address?.slice(0, 6)}...{me.address?.slice(-4)}
+            </>
           ) : (
             <>
-              <button className="button secondary" onClick={loadAttestations} disabled={loading}>
-                {loading ? 'Loading...' : 'Load Attestations'}
-              </button>
-              
-              <div className="attestationsList">
-                {attestations.length === 0 ? (
-                  <p style={{ color: 'rgba(255,255,255,0.6)' }}>No attestations found</p>
-                ) : (
-                  attestations.map((att, i) => (
-                    <div key={i} className="attestationItem">
-                      <strong>UID:</strong> {att.uid}<br/>
-                      <strong>Subject:</strong> {att.subject}<br/>
-                      <strong>Note:</strong> {att.note}
-                    </div>
-                  ))
-                )}
-              </div>
+              <AlertCircle className="h-3 w-3" />
+              Not connected
             </>
           )}
-        </div>
+        </Badge>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Issue Attestation
+            </CardTitle>
+            <CardDescription>
+              Create a new on-chain attestation for an Ethereum address
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {!me?.authenticated ? (
+              <p className="text-muted-foreground">Please connect your wallet first</p>
+            ) : (
+              <form className="space-y-4" onSubmit={handleAttest}>
+                <div className="space-y-2">
+                  <label htmlFor="subject" className="text-sm font-medium">
+                    Subject Address
+                  </label>
+                  <Input 
+                    id="subject"
+                    name="subject" 
+                    placeholder="0x0000000000000000000000000000000000000000" 
+                    required
+                    pattern="0x[a-fA-F0-9]{40}"
+                    title="Please enter a valid Ethereum address"
+                    className="font-mono"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="note" className="text-sm font-medium">
+                    Attestation Note
+                  </label>
+                  <Input 
+                    id="note"
+                    name="note" 
+                    placeholder="Verified identity" 
+                    required
+                  />
+                </div>
+                
+                <Button type="submit" disabled={loading} className="w-full">
+                  {loading ? 'Creating...' : 'Create Attestation'}
+                </Button>
+                
+                {message && (
+                  <div className="mt-4 p-3 bg-muted rounded-md border">
+                    <p className="text-sm font-mono break-all">{message}</p>
+                  </div>
+                )}
+              </form>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Search className="h-5 w-5" />
+              My Attestations
+            </CardTitle>
+            <CardDescription>
+              View attestations associated with your connected wallet
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {!me?.authenticated ? (
+              <p className="text-muted-foreground">Please connect your wallet first</p>
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={loadAttestations} 
+                  disabled={loading}
+                  className="w-full mb-4"
+                >
+                  {loading ? 'Loading...' : 'Load Attestations'}
+                </Button>
+                
+                <div className="space-y-3">
+                  {attestations.length === 0 ? (
+                    <p className="text-muted-foreground text-center py-4">No attestations found</p>
+                  ) : (
+                    attestations.map((att, i) => (
+                      <div key={i} className="p-3 bg-muted rounded-md border">
+                        <div className="space-y-1 text-sm">
+                          <div><strong>UID:</strong> <span className="font-mono">{att.uid}</span></div>
+                          <div><strong>Subject:</strong> <span className="font-mono">{att.subject}</span></div>
+                          <div><strong>Note:</strong> {att.note}</div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </>
   );
