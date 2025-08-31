@@ -22,12 +22,15 @@ docker compose up --build
 # open http://localhost:3000
 ```
 
-## What’s included
-- Next.js (App Router) + TypeScript
-- SIWE API routes: `/api/nonce`, `/api/verify`, `/api/me`, `/api/logout`
-- Placeholder EAS routes: `/api/attest`, `/api/attestations`
-- Simple UI pages: `/` (status + form) and `/siwe` (connect + sign)
-- Dockerfile and docker-compose for one-command run
+## What's included
+- **Next.js (App Router) + TypeScript** with modern ESM setup
+- **shadcn/ui + Tailwind CSS** for professional UI components
+- **Lucide React icons** replacing emojis for better UX
+- **SIWE API routes**: `/api/nonce`, `/api/verify`, `/api/me`, `/api/logout`
+- **Placeholder EAS routes**: `/api/attest`, `/api/attestations`
+- **Auto wallet detection**: Works with MetaMask, Coinbase Wallet, WalletConnect, etc.
+- **Responsive UI**: Clean cards, proper form validation, loading states
+- **Docker setup**: Dockerfile and docker-compose for one-command deployment
 
 ## Next steps
 - Wire EAS SDK with env-driven chain and `SCHEMA_ID`
