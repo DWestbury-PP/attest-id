@@ -3,7 +3,7 @@ import { ironSession } from '../../server/session';
 
 export default ironSession(async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).end();
-  const address = (req.session as any).address as string | undefined;
+  const address = req.session.address;
   if (!address) return res.status(401).json({ error: 'not_authenticated' });
   const { subject, note } = (req.body ?? {}) as { subject?: string; note?: string };
   // Placeholder implementation: echo inputs and return a fake UID
