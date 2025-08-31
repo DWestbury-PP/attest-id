@@ -1,0 +1,12 @@
+services:
+  web:
+    build: .
+    image: attest-id:dev
+    environment:
+      - SESSION_PASSWORD=${SESSION_PASSWORD}
+      - CHAIN_ID=${CHAIN_ID}
+      - RPC_URL=${RPC_URL}
+      - EAS_CONTRACT_ADDRESS=${EAS_CONTRACT_ADDRESS}
+      - SCHEMA_ID=${SCHEMA_ID}
+    ports:
+      - "3000:3000"

@@ -1,20 +1,5 @@
-# Editors
-.idea/
-.vscode/
-
-# Python
-__pycache__/
-*.py[cod]
-.venv/
-venv/
+.next
+node_modules
 .env
-.env.*
-
-# Node
-node_modules/
-dist/
-.build/
-
-# OS
+*.log
 .DS_Store
-Thumbs.db

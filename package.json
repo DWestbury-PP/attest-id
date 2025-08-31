@@ -1,0 +1,25 @@
+{
+  "name": "attest-id",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "echo 'no linter configured'"
+  },
+  "dependencies": {
+    "iron-session": "^8.0.2",
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "siwe": "^2.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "typescript": "^5.6.2"
+  }
+}
