@@ -1,18 +1,25 @@
 import React from 'react';
+import './globals.css';
 
 export const metadata = {
   title: 'attest-id',
-  description: 'SIWE + EAS demo kit'
+  description: 'Enterprise-grade Sign-In with Ethereum + Attestations'
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body style={{ fontFamily: 'ui-sans-serif, system-ui, -apple-system' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', padding: 24 }}>
-          <h1>attest-id</h1>
-          <p style={{ color: '#666' }}>Sign-In with Ethereum + Attestations (EAS)</p>
-          {children}
+      <body>
+        <div className="container">
+          <header className="header">
+            <div>
+              <h1 className="logo">attest-id</h1>
+              <p className="subtitle">Sign-In with Ethereum + Attestations (EAS)</p>
+            </div>
+          </header>
+          <main className="main">
+            {children}
+          </main>
         </div>
       </body>
     </html>
