@@ -12,5 +12,24 @@ EAS + SIWE Enterprise On-Ramp Kit.
 - EAS introduction: https://www.quicknode.com/guides/ethereum-development/smart-contracts/what-is-ethereum-attestation-service-and-how-to-use-it
 - Optimism EAS docs: https://community.optimism.io/identity/contracts-eas
 
-## Status
-Draft scaffold based on brainstorming.
+## Quickstart (Docker)
+
+```bash
+cd attest-id
+cp -n .env.example .env || true
+# edit SESSION_PASSWORD and optionally chain/RPC/EAS addresses
+docker compose up --build
+# open http://localhost:3000
+```
+
+## What’s included
+- Next.js (App Router) + TypeScript
+- SIWE API routes: `/api/nonce`, `/api/verify`, `/api/me`, `/api/logout`
+- Placeholder EAS routes: `/api/attest`, `/api/attestations`
+- Simple UI pages: `/` (status + form) and `/siwe` (connect + sign)
+- Dockerfile and docker-compose for one-command run
+
+## Next steps
+- Wire EAS SDK with env-driven chain and `SCHEMA_ID`
+- Add styled UI and explorer links
+- Add tests and CI
